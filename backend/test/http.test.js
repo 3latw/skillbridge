@@ -1,0 +1,17 @@
+const { test, before, after } = require('node:test');
+const assert = require('node:assert/strict');
+const jwt = require('jsonwebtoken');
+process.env.JWT_SECRET = 'test-only-secret-01234567890123456789';
+const app = require('../src/server');
+let server, base;
+before(async () => { server = app.listen(0, '127.0.0.1'); await new Promise(resolve => server.once('listening', resolve)); base = `http://127.0.0.1:${server.address().port}`; });
+after(() => new Promise(resolve => server.close(resolve)));
+const token = role => jwt.sign({ id: 1, role }, process.env.JWT_SECRET);
+test('health and security headers', async () => { const r = await fetch(base + '/api/health'); assert.equal(r.status, 200); assert.equal(r.headers.get('x-content-type-options'), 'nosniff'); assert.equal(r.headers.get('x-powered-by'), null); });
+test('CORS rejects unknown origins', async () => assert.equal((await fetch(base + '/api/health', { headers: { Origin: 'https://unknown.example' } })).status, 403));
+test('jobs require authentication', async () => assert.equal((await fetch(base + '/api/jobs')).status, 401));
+test('invalid job ID rejected', async () => assert.equal((await fetch(base + '/api/jobs/no/analysis', { headers: { Authorization: 'Bearer ' + token('student') } })).status, 400));
+test('company cannot apply', async () => assert.equal((await fetch(base + '/api/jobs/1/apply', { method: 'POST', headers: { Authorization: 'Bearer ' + token('company'), 'Content-Type': 'application/json' }, body: '{}' })).status, 403));
+test('invalid registration rejected before database access', async () => { const r = await fetch(base + '/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role: 'student', name: 'Test', email: 'bad', phone: '0791234567', password: 'password123' }) }); assert.equal(r.status, 400); });
+test('malformed JSON is 400', async () => assert.equal((await fetch(base + '/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{' })).status, 400));
+test('auth limiter returns JSON 429', async () => { let r; for (let i = 0; i < 31; i++) r = await fetch(base + '/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }); assert.equal(r.status, 429); assert.match((await r.json()).error, /Too many/); });
