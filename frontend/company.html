@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SkillBridge — لوحة الشركة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=Tajawal:wght@400;500;700;800&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<nav class="nav">
+  <div class="container nav-row">
+    <a href="index.html" class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="16" cy="16" r="14.5" stroke="#C6A15B" stroke-width="1.2"/>
+        <path d="M10 19L14 13L18 17L22 11" stroke="#E9C57E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="22" cy="11" r="1.6" fill="#E9C57E"/>
+      </svg>
+      <span data-i18n="brand">SkillBridge</span>
+      <span class="brand-flag" title="Jordan · الأردن">🇯🇴</span>
+    </a>
+    <div class="nav-links">
+      <a href="#post" data-i18n="post_job">نشر وظيفة</a>
+      <a href="#mine" data-i18n="your_jobs">وظائفك</a>
+      <a href="#analytics" data-i18n="candidate_analytics">إحصائيات المرشحين</a>
+    </div>
+    <div class="nav-actions">
+      <button class="lang-btn" data-lang-toggle>English</button>
+      <span id="userName" style="font-size:13.5px;color:var(--slate);"></span>
+      <button class="btn btn-ghost btn-small" id="logoutBtn" data-i18n="nav_logout">تسجيل الخروج</button>
+    </div>
+  </div>
+</nav>
+
+<div class="dash-wrap container">
+  <div class="dash-head">
+    <h1 data-i18n="company_dashboard_heading">لوحة توظيف الشركة</h1>
+    <p data-i18n="company_dashboard_sub">انشر الوظائف وراجع الطلاب المتقدمين لكل وظيفة.</p>
+  </div>
+
+  <div class="stats-grid" id="companyStats">
+    <div class="stat-card"><span data-i18n="stat_open_jobs">وظائف منشورة</span><b>—</b><small data-i18n="stat_open_jobs_hint">فرص نشطة</small></div>
+    <div class="stat-card"><span data-i18n="stat_ready_candidates">متقدمون جاهزون</span><b>—</b><small data-i18n="stat_ready_candidates_hint">عبر كل الوظائف</small></div>
+    <div class="stat-card"><span data-i18n="stat_students_scanned">عدد المتقدمين</span><b>—</b><small data-i18n="stat_students_scanned_hint">أشخاص تقدموا لوظائفك</small></div>
+    <div class="stat-card"><span data-i18n="stat_jobs_with_matches">وظائف بمتقدمين جاهزين</span><b>—</b><small data-i18n="stat_jobs_with_matches_hint">متقدم جاهز واحد على الأقل</small></div>
+  </div>
+
+  <div class="grid-2 company-grid">
+    <form class="panel" id="post">
+      <div class="panel-head">
+        <div>
+          <h2 data-i18n="post_job">نشر وظيفة</h2>
+          <p data-i18n="post_job_sub">كلما كانت المهارات والمستويات أدق كانت المطابقة أفضل.</p>
+        </div>
+      </div>
+      <div class="form-msg" id="jobMsg"></div>
+
+      <div class="field">
+        <label for="jobTitle" data-i18n="job_title_label">مسمّى الوظيفة</label>
+        <input type="text" id="jobTitle" required maxlength="150" data-i18n-ph="job_title_ph" placeholder="مسمّى الوظيفة" />
+      </div>
+      <div class="field">
+        <label for="jobDesc" data-i18n="job_desc_label">وصف الوظيفة</label>
+        <textarea id="jobDesc" maxlength="10000" data-i18n-ph="job_desc_ph" placeholder="وصف مختصر (اختياري)"></textarea>
+      </div>
+      <div class="field">
+        <label for="jobEmail" data-i18n="field_email">بريد التواصل</label>
+        <input type="email" id="jobEmail" required maxlength="150" data-i18n-ph="job_email_ph" placeholder="بريد التواصل" />
+      </div>
+      <div class="field">
+        <label for="jobPhone" data-i18n="field_phone">رقم التواصل</label>
+        <input type="tel" id="jobPhone" required maxlength="30" placeholder="07X XXX XXXX" pattern="^(\+962|0)7[789]\d{7}$" />
+      </div>
+
+      <label data-i18n="required_skills" style="display:block;font-size:12.5px;text-transform:uppercase;color:var(--brass-bright);margin-bottom:8px;">المهارات المطلوبة</label>
+      <div id="reqSkillRows"></div>
+      <button type="button" class="btn btn-add-skill btn-small mt-8" id="addReqSkill">
+        <span aria-hidden="true">＋</span><span data-i18n="add_required_skill">إضافة مهارة مطلوبة</span>
+      </button>
+
+      <button type="submit" class="btn btn-brass btn-block mt-24" id="publishJob" data-i18n="publish_job">نشر الوظيفة</button>
+    </form>
+
+    <div class="panel" id="mine">
+      <div class="panel-head">
+        <div>
+          <h2 data-i18n="your_jobs">وظائفك</h2>
+          <p data-i18n="your_jobs_sub">راجع جاهزية الطلاب المتقدمين لكل وظيفة.</p>
+        </div>
+      </div>
+      <div id="myJobs">
+        <div class="empty-note" data-i18n="loading">جارٍ التحميل…</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel mt-24" id="analytics">
+    <div class="panel-head">
+      <div>
+        <h2 data-i18n="candidate_analytics">إحصائيات المرشحين</h2>
+        <p data-i18n="candidate_analytics_sub">الجاهزية الحالية للطلاب المتقدمين لكل وظيفة.</p>
+      </div>
+    </div>
+    <div id="jobAnalytics" class="analytics-grid">
+      <div class="empty-note" data-i18n="loading">جارٍ التحميل…</div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <span data-i18n="footer_rights">SkillBridge. منصة مطابقة مهارات الطلاب مع الوظائف.</span>
+    <span style="margin:0 8px;color:var(--line-strong);">·</span>
+    <span data-i18n="made_in_jordan">🇯🇴 صُنع في الأردن</span>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="candidatesModal">
+  <div class="modal modal-wide">
+    <div class="modal-head">
+      <h2 data-i18n="matching_students">المتقدمون</h2>
+      <button class="modal-close" id="closeCandidatesModal">&times;</button>
+    </div>
+    <div id="candidatesModalBody"></div>
+  </div>
+</div>
+
+<script src="js/i18n.js"></script>
+<script src="js/api.js"></script>
+<script src="js/company.js"></script>
+</body>
+</html>

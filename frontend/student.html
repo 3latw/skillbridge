@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SkillBridge — لوحة الطالب</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=Tajawal:wght@400;500;700;800&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<nav class="nav">
+  <div class="container nav-row">
+    <a href="index.html" class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="16" cy="16" r="14.5" stroke="#C6A15B" stroke-width="1.2"/>
+        <path d="M10 19L14 13L18 17L22 11" stroke="#E9C57E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="22" cy="11" r="1.6" fill="#E9C57E"/>
+      </svg>
+      <span data-i18n="brand">SkillBridge</span>
+      <span class="brand-flag" title="Jordan · الأردن">🇯🇴</span>
+    </a>
+    <div class="nav-links">
+      <a href="#ledger" data-i18n="manage_skills">إدارة المهارات</a>
+      <a href="#skills-overview" data-i18n="skills_overview">ملخّص المهارات</a>
+      <a href="#jobs" data-i18n="jobs_title">الوظائف المتاحة</a>
+    </div>
+    <div class="nav-actions">
+      <button class="lang-btn" data-lang-toggle>English</button>
+      <span id="userName" style="font-size:13.5px;color:var(--slate);"></span>
+      <button class="btn btn-ghost btn-small" id="logoutBtn" data-i18n="nav_logout">تسجيل الخروج</button>
+    </div>
+  </div>
+</nav>
+
+<div class="dash-wrap container">
+  <div class="dash-head">
+    <h1 data-i18n="student_dashboard_heading">لوحة جاهزيتك للوظائف</h1>
+    <p data-i18n="student_dashboard_sub">طوّر مهاراتك، راقب جاهزيتك، وقدّم فقط عندما تحقق متطلبات الوظيفة.</p>
+  </div>
+
+  <div class="stats-grid" id="studentStats">
+    <div class="stat-card"><span data-i18n="stat_skills">مهاراتك</span><b>—</b><small data-i18n="stat_skills_hint">مهارة مسجّلة</small></div>
+    <div class="stat-card"><span data-i18n="stat_eligible_jobs">وظائف جاهز لها</span><b>—</b><small data-i18n="stat_eligible_jobs_hint">يمكنك التقديم عليها الآن</small></div>
+    <div class="stat-card"><span data-i18n="stat_eligible_companies">شركات متاحة لك</span><b>—</b><small data-i18n="stat_eligible_companies_hint">لديها وظيفة مطابقة</small></div>
+    <div class="stat-card"><span data-i18n="stat_average_level">متوسط مستواك</span><b>—</b><small data-i18n="stat_average_level_hint">من 5</small></div>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <div class="panel" id="ledger">
+        <div class="panel-head">
+          <div>
+            <h2 data-i18n="manage_skills">إدارة المهارات</h2>
+            <p data-i18n="manage_skills_sub">أضف المهارة ومستواك الحقيقي من 1 إلى 5 ثم احفظ.</p>
+          </div>
+        </div>
+        <div class="form-msg" id="skillsMsg"></div>
+        <div id="skillRows"></div>
+        <button type="button" class="btn btn-add-skill btn-small mt-8" id="addSkillRow">
+          <span aria-hidden="true">＋</span><span data-i18n="add_skill">إضافة مهارة</span>
+        </button>
+        <button type="button" class="btn btn-brass mt-24" id="saveSkills" data-i18n="save_skills">حفظ المهارات</button>
+      </div>
+
+      <div class="panel" id="skills-overview">
+        <div class="panel-head">
+          <div>
+            <h2 data-i18n="skills_overview">ملخّص المهارات</h2>
+            <p data-i18n="skills_overview_sub">عرض أوضح لقوة كل مهارة مسجّلة لديك.</p>
+          </div>
+        </div>
+        <div id="skillOverview" class="skill-meter-grid"></div>
+      </div>
+
+      <div class="panel" id="jobs">
+        <div class="panel-head">
+          <div>
+            <h2 data-i18n="jobs_title">الوظائف المتاحة</h2>
+            <p data-i18n="jobs_sub">مرتّبة حسب قرب سجلّك من متطلبات كل وظيفة.</p>
+          </div>
+        </div>
+        <div class="job-filter-row" id="jobFilters">
+          <button class="filter-chip active" data-filter="all" data-i18n="filter_all">الكل</button>
+          <button class="filter-chip" data-filter="ready" data-i18n="filter_ready">جاهز</button>
+          <button class="filter-chip" data-filter="near" data-i18n="filter_near">قريب</button>
+          <button class="filter-chip" data-filter="not_ready" data-i18n="filter_development">يحتاج تطوير</button>
+        </div>
+        <div class="job-grid" id="jobsList">
+          <div class="empty-note" data-i18n="loading">جارٍ التحميل…</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <h2 style="font-size:18px;" data-i18n="contact_card_title">بيانات التواصل الخاصة بك</h2>
+        <p class="mt-8" data-i18n="contact_card_body">تظهر بياناتك للشركة فقط بعد تقديمك لإحدى وظائفها.</p>
+        <div class="privacy-note mt-16"><span>🔒</span><span data-i18n="contact_privacy_note">التقديم يشارك اسمك وبريدك ورقمك ومهاراتك مع الشركة.</span></div>
+        <div class="mt-24" id="contactCard"></div>
+      </div>
+
+      <div class="panel">
+        <h2 style="font-size:18px;" data-i18n="how_apply_works">كيف تقدم طلبك؟</h2>
+        <div class="mini-steps mt-16">
+          <div><b>1</b><span data-i18n="apply_step_1">أضف مهاراتك ومستواك.</span></div>
+          <div><b>2</b><span data-i18n="apply_step_2">أكمل كل مستويات الوظيفة المطلوبة.</span></div>
+          <div><b>3</b><span data-i18n="apply_step_3">اضغط قدّم الآن لحفظ طلبك ومشاركة بيانات التواصل.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <span data-i18n="footer_rights">SkillBridge. منصة مطابقة مهارات الطلاب مع الوظائف.</span>
+    <span style="margin:0 8px;color:var(--line-strong);">·</span>
+    <span data-i18n="made_in_jordan">🇯🇴 صُنع في الأردن</span>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="analysisModal">
+  <div class="modal modal-wide">
+    <div class="modal-head">
+      <h2 data-i18n="analysis_title">التقييم</h2>
+      <button class="modal-close" id="closeModal">&times;</button>
+    </div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script src="js/i18n.js"></script>
+<script src="js/api.js"></script>
+<script src="js/student.js"></script>
+</body>
+</html>
